@@ -18,4 +18,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::resource('cliente','App\Http\Controllers\ClienteController');
+//Route::resource('cliente','App\Http\Controllers\ClienteController');
+Route::ApiResource('carro','App\Http\Controllers\CarroController');
+Route::ApiResource('cliente','App\Http\Controllers\ClienteController');
+Route::ApiResource('locacao','App\Http\Controllers\LocacaoController');
+Route::ApiResource('marca','App\Http\Controllers\MarcaController');
+Route::ApiResource('modelo','App\Http\Controllers\ModeloController');
+
