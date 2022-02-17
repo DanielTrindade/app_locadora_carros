@@ -20,7 +20,7 @@ class MarcaController extends Controller
     {
         //$marcas = Marca::all();
         $marcas = $this->marca->all();
-        return $marcas;
+        return response()->json($marcas,200);
     }
 
   
@@ -33,8 +33,13 @@ class MarcaController extends Controller
      */
     public function store(Request $request)
     {
+        
+        
+        $request->validate($this->marca->rules(),$this->marca->feedback());
+        //stateless
         $marca = $this->marca->create($request->all());
-        return $marca;
+
+        return response()->json($marca,201);
     }
 
     /**
@@ -47,9 +52,9 @@ class MarcaController extends Controller
     {
         $marca = $this->marca->find($id);
         if($marca === null) {
-            return ['erro' => 'recurso pesquisado não existe'];
+            return response()->json(['erro' => 'recurso pesquisado não existe'],404);
         }
-        return $marca;
+        return response()->json($marca,200);
     }
 
    
@@ -70,8 +75,20 @@ class MarcaController extends Controller
         if($marca === null) {
             return ['erro' => 'impossível realizar atualização o recurso pesquisado não existe!'];
         }
+
+        if($request->method() === 'PATCH') {
+            $dinamicRules = array();
+            foreach($marca->rules() as $input => $rule) {
+                if(array_key_exists($input,$request->all())) {
+                    $dinamicRules[$input] = $rule;
+                }
+            }
+            $request->validate($dinamicRules, $marca->feedback());
+        } else {
+            $request->validate($marca->rules(), $marca->feedback());
+        }
         $marca->update($request->all());
-        return $marca;
+        return response()->json($marca,200);
     }
 
     /**
@@ -84,6 +101,6 @@ class MarcaController extends Controller
     {
         $marca = $this->marca->find($id);
         $marca->delete();
-        return ['msg' => 'A marca foi removida com sucesso!'];
+        return response()->json(['msg' => 'A marca foi removida com sucesso!'],200);
     }
 }
